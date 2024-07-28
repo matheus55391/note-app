@@ -1,4 +1,4 @@
-# Notes App
+# Notes Web App
 
 Picked up an idea from [here](https://github.com/florinpop17/app-ideas).
 

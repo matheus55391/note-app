@@ -2,8 +2,6 @@
 
 Picked up an idea from [here](https://github.com/florinpop17/app-ideas).
 
-Demo: [Code Sandbox](https://8zlxkllq18.codesandbox.io/)
-
 ## Description
 
 Create and store your notes for a later purpose!

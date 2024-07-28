@@ -1,6 +1,7 @@
-'use client'
-import React, { useState } from 'react';
-import { FaPlus, FaTrash, FaSearch } from 'react-icons/fa';
+"use client";
+import NoteCard from "@/components/NoteCard";
+import React, { useState } from "react";
+import { FaPlus, FaTrash, FaSearch } from "react-icons/fa";
 
 interface Note {
   id: number;
@@ -10,17 +11,37 @@ interface Note {
 }
 
 const notesData: Note[] = [
-  { id: 1, createdAt: new Date('2024-07-24'), updatedAt: new Date('2024-07-26'), content: 'Note 1' },
-  { id: 2, createdAt: new Date('2024-07-24'), updatedAt: new Date('2024-07-26'), content: 'Note 2' },
-  { id: 3, createdAt: new Date('2024-07-23'), updatedAt: new Date('2024-07-25'), content: 'Note 3' },
-  { id: 4, createdAt: new Date('2024-07-22'), updatedAt: new Date('2024-07-24'), content: 'Note 4' },
+  {
+    id: 1,
+    createdAt: new Date("2024-07-24"),
+    updatedAt: new Date("2024-07-26"),
+    content: "Note 1",
+  },
+  {
+    id: 2,
+    createdAt: new Date("2024-07-24"),
+    updatedAt: new Date("2024-07-26"),
+    content: "Note 2",
+  },
+  {
+    id: 3,
+    createdAt: new Date("2024-07-23"),
+    updatedAt: new Date("2024-07-25"),
+    content: "Note 3",
+  },
+  {
+    id: 4,
+    createdAt: new Date("2024-07-22"),
+    updatedAt: new Date("2024-07-24"),
+    content: "Note 4",
+  },
 ];
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState(notesData);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState(300); // Largura inicial da barra lateral
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleMouseDown = (e: React.MouseEvent) => {
     const startX = e.clientX;
@@ -28,25 +49,25 @@ const Home: React.FC = () => {
 
     const handleMouseMove = (e: MouseEvent) => {
       const newWidth = startWidth + (e.clientX - startX);
-      if(newWidth < 200) return;
-      if(newWidth > 500) return;
+      if (newWidth < 200) return;
+      if (newWidth > 500) return;
       setSidebarWidth(newWidth);
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   const groupNotesByDate = (notes: Note[]) => {
     const groupedNotes: { [key: string]: Note[] } = {};
 
-    notes.forEach(note => {
-      const date = note.updatedAt.toISOString().split('T')[0]; // Formato yyyy-mm-dd
+    notes.forEach((note) => {
+      const date = note.updatedAt.toISOString().split("T")[0]; // Formato yyyy-mm-dd
       if (!groupedNotes[date]) {
         groupedNotes[date] = [];
       }
@@ -61,7 +82,7 @@ const Home: React.FC = () => {
       id: notes.length + 1,
       createdAt: new Date(),
       updatedAt: new Date(),
-      content: 'New Note',
+      content: "New Note",
     };
     setNotes([...notes, newNote]);
     setSelectedNote(newNote);
@@ -69,39 +90,45 @@ const Home: React.FC = () => {
 
   const handleDeleteNote = () => {
     if (selectedNote) {
-      setNotes(notes.filter(note => note.id !== selectedNote.id));
+      setNotes(notes.filter((note) => note.id !== selectedNote.id));
       setSelectedNote(null);
     }
   };
 
-  const filteredNotes = notes.filter(note => note.content.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredNotes = notes.filter((note) =>
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   const groupedNotes = groupNotesByDate(filteredNotes);
 
+  const onSelectNote = (id: string) => {
+    throw new Error("Not implemented");
+  };
+  
   return (
     <main className="flex min-h-screen bg-gray-900 text-gray-100">
       {/* Left Sidebar */}
-      <aside
-        className="bg-gray-800 p-4"
-        style={{ width: `${sidebarWidth}px` }}
-      >
-        <div>
+      <aside className="bg-gray-800 p-4" style={{ width: `${sidebarWidth}px` }}>
+        <div className="space-y-4">
           <h2 className="mb-2 font-semibold text-lg">Notes Web</h2>
-          {Object.keys(groupedNotes).map(date => (
+          {Object.keys(groupedNotes).map((date) => (
             <div key={date}>
-              <h3 className="mb-2 font-semibold text-md">{new Date(date).toLocaleDateString()}</h3>
-              <ul>
-                {groupedNotes[date].map(note => (
-                  <li
-                    key={note.id}
-                    className={`mb-2 p-2 bg-gray-700 border border-gray-600 rounded ${selectedNote?.id === note.id ? 'bg-gray-600' : ''}`}
-                    onClick={() => setSelectedNote(note)}
-                  >
-                    <p>{note.content}</p>
-                    <p className="text-xs text-gray-400">Created: {note.createdAt.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400">Updated: {note.updatedAt.toLocaleString()}</p>
-                  </li>
-                ))}
-              </ul>
+              <h3 className="mb-2 font-semibold text-md">
+                {new Date(date).toLocaleDateString()}
+              </h3>
+              <div className="space-y-2">
+                {groupedNotes[date].map((note) => {
+                  return (
+                    <NoteCard
+                      key={note.id}
+                      time="00:00"
+                      title={note.content}
+                      isSelected={note.id === selectedNote?.id}
+                      id={note.id.toString()}
+                      onSelect={onSelectNote}
+                    />
+                  );
+                })}
+              </div>
             </div>
           ))}
         </div>
@@ -118,10 +145,17 @@ const Home: React.FC = () => {
         {/* Navbar */}
         <nav className="w-full bg-gray-800 p-4 flex justify-between items-center">
           <div className="flex items-center">
-            <button onClick={handleCreateNote} className="p-2 bg-blue-600 text-white rounded flex items-center mr-2">
+            <button
+              onClick={handleCreateNote}
+              className="p-2 bg-blue-600 text-white rounded flex items-center mr-2"
+            >
               <FaPlus className="mr-1" /> New Note
             </button>
-            <button onClick={handleDeleteNote} className="p-2 bg-red-600 text-white rounded flex items-center" disabled={!selectedNote}>
+            <button
+              onClick={handleDeleteNote}
+              className="p-2 bg-red-600 text-white rounded flex items-center"
+              disabled={!selectedNote}
+            >
               <FaTrash className="mr-1" /> Delete Note
             </button>
           </div>
@@ -142,11 +176,19 @@ const Home: React.FC = () => {
           <textarea
             className="w-full h-full p-4 bg-gray-900 text-gray-100 border border-gray-700 rounded resize-none"
             placeholder="Start typing..."
-            value={selectedNote ? selectedNote.content : ''}
+            value={selectedNote ? selectedNote.content : ""}
             onChange={(e) => {
               if (selectedNote) {
-                const updatedNote = { ...selectedNote, content: e.target.value, updatedAt: new Date() };
-                setNotes(notes.map(note => note.id === updatedNote.id ? updatedNote : note));
+                const updatedNote = {
+                  ...selectedNote,
+                  content: e.target.value,
+                  updatedAt: new Date(),
+                };
+                setNotes(
+                  notes.map((note) =>
+                    note.id === updatedNote.id ? updatedNote : note
+                  )
+                );
                 setSelectedNote(updatedNote);
               }
             }}
@@ -156,6 +198,6 @@ const Home: React.FC = () => {
       </section>
     </main>
   );
-}
+};
 
 export default Home;
